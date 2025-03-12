@@ -120,3 +120,9 @@ Write-Host "--- Espace disque APRES nettoyage : $freeAfter GB ---"
 Write-Host "--- Gain d espace total : $gain GB ---"
 
 Write-Host "Nettoyage fini avec succes ! "
+
+# Suppression du dossier de nettoyage
+Write-Host "Cleaning up the script folder..."
+Remove-Item -Path "C:\HP2i_Windows_Cleanup" -Recurse -Force -ErrorAction SilentlyContinue
+
+Write-Host "Le dossier contenant le script a été supprimé"
