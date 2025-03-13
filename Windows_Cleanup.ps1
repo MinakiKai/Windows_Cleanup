@@ -50,7 +50,59 @@ Write-Host "-------------------------"
 
 #  Étape 6 : Lancement du Nettoyage de disque en arrière-plan
 Write-Host "Etape 6 : Lancement du Nettoyage de disque..."
-Start-Process -FilePath "cleanmgr.exe" -ArgumentList "/sagerun:1" -NoNewWindow -Wait
+# Clé de configuration pour cleanmgr /sageset:1
+$cleanMgrKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches"
+
+# Liste des options à activer
+$cleanOptions = @(
+    "Active Setup Temp Folders",
+    "BranchCache",
+    "Content Indexer Cleaner",
+    "Delivery Optimization Files",
+    "Device Driver Packages",
+    "Diagnostic Data Viewer database files",
+    "Downloaded Program Files",
+    "Internet Cache Files",
+    "Language Pack Removal",
+    "Old ChkDsk Files",
+    "Previous Installations",
+    "Recycle Bin",   # 🚨 Cette ligne sera ignorée pour NE PAS supprimer la corbeille
+    "RetailDemo Offline Content",
+    "Setup Log Files",
+    "System error memory dump files",
+    "System error minidump files",
+    "Temporary Files",
+    "Temporary Setup Files",
+    "Thumbnail Cache",
+    "Update Cleanup",
+    "Upgrade Discarded Files",
+    "User file versions",
+    "Windows Defender",
+    "Windows Error Reporting Archive Files",
+    "Windows Error Reporting Files",
+    "Windows ESD installation files",
+    "Windows Upgrade Log Files"
+)
+
+# Activer les options SAUF la corbeille
+foreach ($option in $cleanOptions) {
+    if ($option -ne "Recycle Bin") {  # Ignore la corbeille
+        $path = "$cleanMgrKey\$option"
+        if (Test-Path $path) {
+            Set-ItemProperty -Path $path -Name "StateFlags001" -Value 2 -Force
+        }
+    }
+}
+
+Write-Host "Configuration du nettoyage de disque enregistrée (sauf corbeille)."
+
+$cleanmgr = Start-Process -FilePath "cleanmgr.exe" -ArgumentList "/sagerun:1" -NoNewWindow -PassThru
+$cleanmgr | Wait-Process -Timeout 900  # Timeout de 5 minutes
+if (!$cleanmgr.HasExited) {
+    Write-Host "Nettoyage de disque prend trop de temps, arrêt forcé."
+    Stop-Process -Id $cleanmgr.Id -Force
+}
+
 Write-Host " Nettoyage de disque terminé."
 Write-Host "-------------------------"
 
