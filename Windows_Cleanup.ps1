@@ -49,7 +49,9 @@ Write-Host " Fichiers temporaires delete."
 Write-Host "-------------------------"
 
 #  Étape 6 : Lancement du Nettoyage de disque en arrière-plan
-Write-Host "Etape 6 : Lancement du Nettoyage de disque(Peut prendre jusqu'à 15min)..."
+Write-Host "Etape 6 : Lancement du Nettoyage de disque(Peut prendre jusqu'à 15min)..." 
+
+# Options à configurer pour le nettoyage disque
 # Clé de configuration pour cleanmgr /sageset:1
 $cleanMgrKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches"
 
