@@ -84,7 +84,7 @@ $cleanOptions = @(
     "Windows Upgrade Log Files"
 )
 
-# Activer les options SAUF la corbeille
+# Activer les options SAUF nettoyage corbeille
 foreach ($option in $cleanOptions) {
     if ($option -ne "Recycle Bin") {  # Ignore la corbeille
         $path = "$cleanMgrKey\$option"
@@ -94,7 +94,7 @@ foreach ($option in $cleanOptions) {
     }
 }
 
-Write-Host "Configuration du nettoyage de disque enregistrée (sauf corbeille)."
+Write-Host "Configuration du nettoyage de disque enregistrée (nettoyage complet sauf corbeille)."
 
 $cleanmgr = Start-Process -FilePath "cleanmgr.exe" -ArgumentList "/sagerun:1" -NoNewWindow -PassThru
 $cleanmgr | Wait-Process -Timeout 900  # Timeout de 15 minutes
