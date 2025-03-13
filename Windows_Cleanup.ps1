@@ -1,4 +1,4 @@
-#  Version 2.0 date : 12/03/25
+rt#  Version 2.0 date : 12/03/25
 #  Vérification de l’espace disque AVANT nettoyage
 $diskBefore = Get-PSDrive C
 $freeBefore = $diskBefore.Free / 1GB
@@ -27,7 +27,7 @@ Write-Host " Service Windows Update reboot."
 Write-Host "-------------------------"
 
 #  Étape 4 : Nettoyage du dossier WinSxS (peut prendre du temps)
-Write-Host "Etape 4 : Nettoyage du dossier WinSxS... (Patientez)"
+Write-Host "Etape 4 : Nettoyage du dossier WinSxS(Peut prendre du temps)..."
 Dism.exe /Online /Cleanup-Image /StartComponentCleanup /ResetBase
 Write-Host " Nettoyage WinSxS fini."
 Write-Host "-------------------------"
@@ -49,7 +49,7 @@ Write-Host " Fichiers temporaires delete."
 Write-Host "-------------------------"
 
 #  Étape 6 : Lancement du Nettoyage de disque en arrière-plan
-Write-Host "Etape 6 : Lancement du Nettoyage de disque..."
+Write-Host "Etape 6 : Lancement du Nettoyage de disque(Peut prendre jusqu'à 15min)..."
 # Clé de configuration pour cleanmgr /sageset:1
 $cleanMgrKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches"
 
