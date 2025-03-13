@@ -97,7 +97,7 @@ foreach ($option in $cleanOptions) {
 Write-Host "Configuration du nettoyage de disque enregistrée (sauf corbeille)."
 
 $cleanmgr = Start-Process -FilePath "cleanmgr.exe" -ArgumentList "/sagerun:1" -NoNewWindow -PassThru
-$cleanmgr | Wait-Process -Timeout 900  # Timeout de 5 minutes
+$cleanmgr | Wait-Process -Timeout 900  # Timeout de 15 minutes
 if (!$cleanmgr.HasExited) {
     Write-Host "Nettoyage de disque prend trop de temps, arrêt forcé."
     Stop-Process -Id $cleanmgr.Id -Force
@@ -174,7 +174,7 @@ Write-Host "--- Gain d espace total : $gain GB ---"
 Write-Host "Nettoyage fini avec succes ! "
 
 # Suppression du dossier de nettoyage
-Write-Host "Cleaning up the script folder..."
+Write-Host "nettoyage du dossier contenant le script..."
 Remove-Item -Path "C:\HP2i_Windows_Cleanup" -Recurse -Force -ErrorAction SilentlyContinue
 
 Write-Host "Le dossier contenant le script a été supprimé"
