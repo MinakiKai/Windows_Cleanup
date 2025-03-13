@@ -1,4 +1,4 @@
-rt#  Version 2.0 date : 12/03/25
+#  Version 2.0 date : 12/03/25
 #  Vérification de l’espace disque AVANT nettoyage
 $diskBefore = Get-PSDrive C
 $freeBefore = $diskBefore.Free / 1GB
