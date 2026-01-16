@@ -1,13 +1,13 @@
 #  Version 3.0 date : 16/01/26
 
-# Vérification des droits administrateur (mode avertissement)
+# Verification des droits administrateur (mode avertissement)
 $IsAdmin = ([Security.Principal.WindowsPrincipal] `
     [Security.Principal.WindowsIdentity]::GetCurrent()
 ).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
 if (-not $IsAdmin) {
     Write-Host "=============================================="
-    Write-Host "Script non execute en ADMIN, certaines étapes peuvent échouer."
+    Write-Host "Script non execute en ADMIN, certaines etapes peuvent echouer."
     Write-Host "Nettoyage partiel du disque"
     Write-Host "=============================================="
     Write-Host ""
@@ -15,42 +15,42 @@ if (-not $IsAdmin) {
 }
 
 
-#  Vérification de l’espace disque AVANT nettoyage
+#  Verification de l’espace disque AVANT nettoyage
 $diskBefore = Get-PSDrive C
 $freeBefore = $diskBefore.Free / 1GB
 Write-Host " Espace disque AVANT nettoyage : $freeBefore GB"
 Write-Host "-------------------------"
 
-#  Étape 1 : Arrêt du service Windows Update
+#  Etape 1 : Arrêt du service Windows Update
 Write-Host "Etape 1 : Arret du service Windows Update..."
 Stop-Service -Name wuauserv -Force
 Start-Sleep -Seconds 2
 Write-Host " Service Windows Update stop."
 Write-Host "-------------------------"
 
-#  Étape 2 : Suppression des fichiers Windows Update inutiles
-Write-Host "Etape 2 : Suppression des fichiers de mises à jour inutiles..."
+#  Etape 2 : Suppression des fichiers Windows Update inutiles
+Write-Host "Etape 2 : Suppression des fichiers de mises a jour inutiles..."
 Remove-Item -Path "C:\Windows\SoftwareDistribution\Download\*" -Recurse -Force -ErrorAction SilentlyContinue
 Start-Sleep -Seconds 2
 Write-Host " Fichiers Windows Update delete."
 Write-Host "-------------------------"
 
-#  Étape 3 : Redémarrage du service Windows Update
+#  Etape 3 : Redemarrage du service Windows Update
 Write-Host "Etape 3 : Redemarrage du service Windows Update..."
 Start-Service -Name wuauserv
 Start-Sleep -Seconds 2
 Write-Host " Service Windows Update reboot."
 Write-Host "-------------------------"
 
-#  Étape 4 : Nettoyage du dossier WinSxS (peut prendre du temps)
+#  Etape 4 : Nettoyage du dossier WinSxS (peut prendre du temps)
 Write-Host "Etape 4 : Nettoyage du dossier WinSxS(Peut prendre du temps)..."
 Dism.exe /Online /Cleanup-Image /StartComponentCleanup
-# Limitation du rollback Windows (Feature Update) à 7 jours
+# Limitation du rollback Windows (Feature Update) a 7 jours
 Dism.exe /Online /Set-OSUninstallWindow /Value:8
 Write-Host " Nettoyage WinSxS fini."
 Write-Host "-------------------------"
 
-#  Étape 5 : Suppression des fichiers temporaires Windows
+#  Etape 5 : Suppression des fichiers temporaires Windows
 Write-Host "Etape 5 : Suppression des fichiers temporaires..."
 if (Test-Path "C:\Windows\Temp\*") {
     Get-ChildItem -Path "C:\Windows\Temp\*" -Recurse -Force | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
@@ -66,14 +66,14 @@ if (Test-Path "$env:TEMP\*") {
 Write-Host " Fichiers temporaires delete."
 Write-Host "-------------------------"
 
-#  Étape 6 : Lancement du Nettoyage de disque en arrière-plan
-Write-Host "Etape 6 : Lancement du Nettoyage de disque(Peut prendre jusqu'à 15min)..." 
+#  Etape 6 : Lancement du Nettoyage de disque en arrière-plan
+Write-Host "Etape 6 : Lancement du Nettoyage de disque(Peut prendre jusqu'a 15min)..." 
 
-# Options à configurer pour le nettoyage disque
-# Clé de configuration pour cleanmgr /sageset:1
+# Options a configurer pour le nettoyage disque
+# Cle de configuration pour cleanmgr /sageset:1
 $cleanMgrKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches"
 
-# Liste des options à activer
+# Liste des options a activer
 $cleanOptions = @(
     "Active Setup Temp Folders",
     "BranchCache",
@@ -86,7 +86,7 @@ $cleanOptions = @(
     "Language Pack Removal",
     "Old ChkDsk Files",
     "Previous Installations",
-    "Recycle Bin",   # 🚨 Cette ligne sera ignorée pour NE PAS supprimer la corbeille
+    "Recycle Bin",   # 🚨 Cette ligne sera ignoree pour NE PAS supprimer la corbeille
     "RetailDemo Offline Content",
     "Setup Log Files",
     "System error memory dump files",
@@ -114,19 +114,19 @@ foreach ($option in $cleanOptions) {
     }
 }
 
-Write-Host "Configuration du nettoyage de disque enregistrée (nettoyage complet sauf corbeille)."
+Write-Host "Configuration du nettoyage de disque enregistree (nettoyage complet sauf corbeille)."
 
 $cleanmgr = Start-Process -FilePath "cleanmgr.exe" -ArgumentList "/sagerun:1" -NoNewWindow -PassThru
 $cleanmgr | Wait-Process -Timeout 900  # Timeout de 15 minutes
 if (!$cleanmgr.HasExited) {
-    Write-Host "Nettoyage de disque prend trop de temps, arrêt forcé."
+    Write-Host "Nettoyage de disque prend trop de temps, arrêt force."
     Stop-Process -Id $cleanmgr.Id -Force
 }
 
-Write-Host " Nettoyage de disque terminé."
+Write-Host " Nettoyage de disque termine."
 Write-Host "-------------------------"
 
-#  Étape 7 : Supprimer dans la corbeille tout ce qui est vieux de + d'un an
+#  Etape 7 : Supprimer dans la corbeille tout ce qui est vieux de + d'un an
 $limitDate = (Get-Date).AddYears(-1)
 $recycleBinPath = "$env:SystemDrive\`$Recycle.Bin\"
 
@@ -135,7 +135,7 @@ if (Test-Path $recycleBinPath) {
     if ($oldFiles.Count -gt 0) {
         Write-Host "Suppression des fichiers de plus d'un an..."
         $oldFiles | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-        Write-Host "Fichiers de plus d'un an supprimés de la corbeille."
+        Write-Host "Fichiers de plus d'un an supprimes de la corbeille."
     } else {
         Write-Host "Aucun fichier de plus d'un an trouve dans la corbeille."
     }
@@ -144,7 +144,7 @@ if (Test-Path $recycleBinPath) {
 }
 Write-Host "-------------------------"
 
-#  Étape 8 : Vérification et réduction de la taille de Windows.edb
+#  Etape 8 : Verification et reduction de la taille de Windows.edb
 Write-Host "Etape 8 : Verification de la taille de Windows.edb (fichier indexation Windows)..."
 $edbPath1 = "C:\ProgramData\Microsoft\Search\Data\Applications\Windows\Windows.edb"
 $edbPath2 = "C:\ProgramData\Microsoft\Search\Data\Applications\Windows\Windows.db"
@@ -158,7 +158,7 @@ if (Test-Path $edbPath1) {
 }
 Write-Host "-------------------------"
 
-#  Réduction de la taille de Windows.edb
+#  Reduction de la taille de Windows.edb
 Write-Host "Reduction de la taille de Windows.edb..."
 Stop-Service WSearch -Force
 Start-Sleep -Seconds 5
@@ -174,21 +174,22 @@ Write-Host "Service Windows Search reboot."
 
 Write-Host "-------------------------"
 
-# Vérification de l’espace disque APRÈS nettoyage
+# Verification de l’espace disque APRÈS nettoyage
 $diskAfter = Get-PSDrive C
 $freeAfter = $diskAfter.Free / 1GB
 $gain = [math]::Round($freeAfter - $freeBefore, 2)
 
 Write-Host "--- Espace disque APRES nettoyage : $freeAfter GB ---"
-Write-Host "--- Gain d espace total : $gain GB ---"
+Write-Host "--- Gain d'espace total : $gain GB ---"
 
 Write-Host "Nettoyage fini avec succes ! "
 
 # Suppression du dossier de nettoyage
-Write-Host "nettoyage du dossier contenant le script..."
+Write-Host "Nettoyage du dossier contenant le script..."
 Remove-Item -Path "C:\Powershell_Windows_Cleanup" -Recurse -Force -ErrorAction SilentlyContinue
 
-Write-Host "Le dossier contenant le script a été supprimé"
+Write-Host "Le dossier contenant le script a ete supprime"
+
 
 
 
