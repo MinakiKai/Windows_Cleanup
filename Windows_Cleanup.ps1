@@ -153,16 +153,6 @@ Set-ItemProperty -Path $regPath -Name "SetupCompletedSuccessfully" -Value 0 -For
 
 Start-Service WSearch
 
-if (Test-Path $edbPath1) {
-    Remove-Item $edbPath1 -Force -ErrorAction Stop
-    Write-Host "Windows.edb delete."
-} elseif (Test-Path $edbPath2) {
-    Remove-Item $edbPath2 -Force -ErrorAction Stop
-    Write-Host "Windows.db delete."
-} else {
-    Write-Host "Aucun fichier a supprimer."
-}
-
 Set-Service WSearch -StartupType Automatic
 if (-not (Get-Service WSearch -ErrorAction SilentlyContinue)) {
     Start-Service WSearch
@@ -186,5 +176,6 @@ Write-Host "nettoyage du dossier contenant le script..."
 Remove-Item -Path "C:\HP2i_Windows_Cleanup" -Recurse -Force -ErrorAction SilentlyContinue
 
 Write-Host "Le dossier contenant le script a été supprimé"
+
 
 
