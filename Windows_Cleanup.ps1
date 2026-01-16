@@ -1,4 +1,20 @@
 #  Version 3.0 date : 16/01/26
+
+# Vérification des droits administrateur (mode avertissement)
+$IsAdmin = ([Security.Principal.WindowsPrincipal] `
+    [Security.Principal.WindowsIdentity]::GetCurrent()
+).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+if (-not $IsAdmin) {
+    Write-Host "=============================================="
+    Write-Host "Script non execute en ADMIN, certaines étapes peuvent échouer."
+    Write-Host "Nettoyage partiel du disque"
+    Write-Host "=============================================="
+    Write-Host ""
+    Start-Sleep -Seconds 3
+}
+
+
 #  Vérification de l’espace disque AVANT nettoyage
 $diskBefore = Get-PSDrive C
 $freeBefore = $diskBefore.Free / 1GB
@@ -173,6 +189,7 @@ Write-Host "nettoyage du dossier contenant le script..."
 Remove-Item -Path "C:\Powershell_Windows_Cleanup" -Recurse -Force -ErrorAction SilentlyContinue
 
 Write-Host "Le dossier contenant le script a été supprimé"
+
 
 
 
