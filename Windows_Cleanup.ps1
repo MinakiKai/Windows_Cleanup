@@ -151,14 +151,11 @@ Start-Sleep -Seconds 5
 $regPath = "HKLM:\SOFTWARE\Microsoft\Windows Search"
 Set-ItemProperty -Path $regPath -Name "SetupCompletedSuccessfully" -Value 0 -Force
 
-Start-Service WSearch
-
 Set-Service WSearch -StartupType Automatic
-if (-not (Get-Service WSearch -ErrorAction SilentlyContinue)) {
-    Start-Service WSearch
-    Start-Sleep -Seconds 2
-    Write-Host "Service Windows Search reboot."
-}
+Start-Service WSearch
+Start-Sleep -Seconds 2
+Write-Host "Service Windows Search reboot."
+
 Write-Host "-------------------------"
 
 # Vérification de l’espace disque APRÈS nettoyage
@@ -173,9 +170,10 @@ Write-Host "Nettoyage fini avec succes ! "
 
 # Suppression du dossier de nettoyage
 Write-Host "nettoyage du dossier contenant le script..."
-Remove-Item -Path "C:\HP2i_Windows_Cleanup" -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -Path "C:\Powershell_Windows_Cleanup" -Recurse -Force -ErrorAction SilentlyContinue
 
 Write-Host "Le dossier contenant le script a été supprimé"
+
 
 
 
