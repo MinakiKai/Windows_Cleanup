@@ -1,4 +1,4 @@
-#  Version 2.0 date : 12/03/25
+#  Version 3.0 date : 16/01/26
 #  Vérification de l’espace disque AVANT nettoyage
 $diskBefore = Get-PSDrive C
 $freeBefore = $diskBefore.Free / 1GB
@@ -186,4 +186,5 @@ Write-Host "nettoyage du dossier contenant le script..."
 Remove-Item -Path "C:\HP2i_Windows_Cleanup" -Recurse -Force -ErrorAction SilentlyContinue
 
 Write-Host "Le dossier contenant le script a été supprimé"
+
 
