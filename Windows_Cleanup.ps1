@@ -28,7 +28,9 @@ Write-Host "-------------------------"
 
 #  Étape 4 : Nettoyage du dossier WinSxS (peut prendre du temps)
 Write-Host "Etape 4 : Nettoyage du dossier WinSxS(Peut prendre du temps)..."
-Dism.exe /Online /Cleanup-Image /StartComponentCleanup /ResetBase
+Dism.exe /Online /Cleanup-Image /StartComponentCleanup
+# Limitation du rollback Windows (Feature Update) à 7 jours
+Dism.exe /Online /Set-OSUninstallWindow /Value:8
 Write-Host " Nettoyage WinSxS fini."
 Write-Host "-------------------------"
 
@@ -142,10 +144,14 @@ Write-Host "-------------------------"
 
 #  Réduction de la taille de Windows.edb
 Write-Host "Reduction de la taille de Windows.edb..."
-Set-Service WSearch -StartupType Disabled
 Stop-Service WSearch -Force
 Start-Sleep -Seconds 5
-Write-Host "Service Windows Search stop."
+
+# Demande a Windows de reconstruire l'index
+$regPath = "HKLM:\SOFTWARE\Microsoft\Windows Search"
+Set-ItemProperty -Path $regPath -Name "SetupCompletedSuccessfully" -Value 0 -Force
+
+Start-Service WSearch
 
 if (Test-Path $edbPath1) {
     Remove-Item $edbPath1 -Force -ErrorAction Stop
@@ -180,3 +186,4 @@ Write-Host "nettoyage du dossier contenant le script..."
 Remove-Item -Path "C:\HP2i_Windows_Cleanup" -Recurse -Force -ErrorAction SilentlyContinue
 
 Write-Host "Le dossier contenant le script a été supprimé"
+
